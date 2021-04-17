@@ -1,0 +1,7 @@
+fastapi 
+uvicorn 
+wait4it
+pymongo
+requests 
+requests_http_signature
+Faker
