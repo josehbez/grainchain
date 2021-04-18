@@ -10,7 +10,7 @@ class User(BaseModel):
     name: str
     username: str
     location: str
-    
+
 class UserResponse(User):
     zeta: Zeta
 
@@ -25,4 +25,3 @@ class DeleteResponse(BaseModel):
 
 class FakeUserResponse(BaseModel):
     count: int
-    
