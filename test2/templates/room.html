@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<head>
+<style>
+    .bg-black {
+        background-color: black;
+    }
+    .bg-opacity {
+        opacity: 0.7;
+    }
+    
+
+</style>
+</head>
+<body>
+    <table style="width:100%">
+        {% set n = 0%}
+        {% for row  in matrix %}
+            {% set n =  loop.index -1%}
+            <tr>
+
+            {% for column  in row %}
+                {% set m = loop.index -1%}
+                {% if column == 1 %}
+                    <td class="bg-black">{{column}}</td>
+                {% else %}
+                    {% set class = 'bg-opacity' %}
+                    {% if column == n|string+","+m|string %}
+                        {% set class = '' %}
+                    {% endif %}    
+                    <td 
+                        class="{{class}}" 
+                        style="background-color: {{ layers_color.get(column) }};">{{n}},{{m}}</td>
+                {% endif %}
+                
+            {% endfor %}
+            </tr>
+        {% endfor %}
+    </table>
+</body>
