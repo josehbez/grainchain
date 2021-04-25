@@ -1,10 +1,35 @@
-<!DOCTYPE html>
-<head>
+{% extends "base.html" %}
 
-</head>
-<body>
-    <form action="/upload" method="POST" enctype="multipart/form-data">
-        <input type="file" id="rooms" name="rooms" accept=".txt">
-        <input type="submit">
-      </form>
-</body>
+{% block title %}Home{% endblock %}
+
+{% block head %}
+  {{ super() }}
+  <style>
+    input[type=submit], input[type=file] {
+      margin-top: 80px;
+      border-radius: 4px;
+      background-color: #efefef;
+      border: none;
+      padding: 16px 32px;
+      text-decoration: none;
+      margin: 4px 2px;
+      cursor: pointer;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+<div class="main-content-middle">
+  <form action="/upload" method="POST" enctype="multipart/form-data">
+      <div>
+        <input type="file" id="rooms" name="rooms" 
+          accept=".txt" required="True"
+          value="Cargar habitación">
+      </div>
+      <div>
+        <input class="input-submit" type="submit" value="Calcular Bombillos">
+      </div>
+  </form>
+</div>
+
+{% endblock %}

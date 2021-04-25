@@ -1,39 +1,63 @@
-<!DOCTYPE html>
-<head>
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+{% block menu %}
+<a href="/" class="active">Cargar habitación</a>
+{% endblock %}
+
+{% block head %}
+  {{ super() }}
 <style>
-    .bg-black {
+    .room-wall {
         background-color: black;
     }
-    .bg-opacity {
+    .lighted-room {
         opacity: 0.7;
     }
-    
 
-</style>
-</head>
-<body>
+</style>  
+{% endblock %}
+
+{% block content %}
+<div class="main-content-middle">
     <table style="width:100%">
         {% set n = 0%}
         {% for row  in matrix %}
             {% set n =  loop.index -1%}
             <tr>
-
             {% for column  in row %}
                 {% set m = loop.index -1%}
                 {% if column == 1 %}
-                    <td class="bg-black">{{column}}</td>
+                    <td class="room-wall">{{column}}</td>
                 {% else %}
-                    {% set class = 'bg-opacity' %}
-                    {% if column == n|string+","+m|string %}
-                        {% set class = '' %}
+                    {% set lighted_room = 'lighted-room' %}
+                    {% set room = n|string+","+m|string %}
+                    {% if column == room %}
+                        {% set lighted_room = '' %}
+                        {% set room = '💡' %}
                     {% endif %}    
                     <td 
-                        class="{{class}}" 
-                        style="background-color: {{ layers_color.get(column) }};">{{n}},{{m}}</td>
+                        class="{{lighted_room}}" 
+                        style="background-color: {{ layers_color.get(column) }};">{{room}}</td>
                 {% endif %}
                 
             {% endfor %}
             </tr>
         {% endfor %}
     </table>
-</body>
+</div>
+{% endblock %}
+{% block footer %}
+<div>
+    seleccione la cantidad de bombillos
+</div>
+<div class="pagination">
+    {% for i in range(max_layers) %}
+        {% set layer_active = '' %}
+        {% if i == layers %}
+            {% set layer_active = 'active' %}
+        {% endif %}
+        <a class="{{layer_active}}" href="/room?filename={{filename}}&layers={{i}}">{{i+1}}</a>
+    {% endfor %}
+</div>
+{% endblock %}
