@@ -40,12 +40,12 @@ class Lighting:
                 else:
                     self.paths.update({index:[ new_index]})
             if mode == 'bottom':
-                return lighting_route(n+1, m, index, mode) # 3,2 abajo
+                return lighting_route(n+1, m, index, mode) # 3,2
             elif mode == 'left':
-                return lighting_route(n, m-1, index, mode) # 2,1 izquierda
+                return lighting_route(n, m-1, index, mode) # 2,1
             elif mode == 'right':
-                return lighting_route(n, m+1, index, mode) # 2,3 derecha
-            return lighting_route(n-1, m, index, mode) # 1,2 arriba
+                return lighting_route(n, m+1, index, mode) # 2,3
+            return lighting_route(n-1, m, index, mode) # 1,2
         for indexN, column in enumerate(self.matrixorg):
             for indexM, value in enumerate(column):
                 index = f"{indexN},{indexM}"
@@ -53,7 +53,15 @@ class Lighting:
                 lighting_route(indexN, indexM, index, mode='bottom')
                 lighting_route(indexN, indexM, index, mode='left')
                 lighting_route(indexN, indexM, index, mode='right')
-
+        
+        ls = copy.deepcopy(self.lighting_sorted())
+        path_temp = []
+        for key in reversed(ls):
+            if key not in path_temp:
+                path_temp += self.paths.get(key)
+            else:                
+                del self.paths[key]
+        
     def rooms(self, wall=False, light=False, matrix=None):
         matrix = matrix or self.matrixorg
         print(tabulate.tabulate(matrix))
@@ -80,50 +88,3 @@ class Lighting:
                 for room in self.paths.get(value):
                     _light_on(room, value)
         return matrix, max_layers, colors
-    
-    ### V2
-    def v2(self):
-        def lighting_route(n, m, index, mode='top'): # 2,2
-            if n < 0 or m < 0 or \
-                n >= self.size_row or m  >= self.size_column or \
-                self.matrix[n][m]:
-                return
-            new_index = f"{n},{m}"
-            if index != new_index:
-                if index in self.paths.keys():
-                    self.paths[index].append(new_index)
-                else:
-                    self.paths.update({index:[ new_index]})
-                self.matrix[n][m] = 1
-            if mode == 'bottom':
-                return lighting_route(n+1, m, index, mode) # 3,2 abajo
-            elif mode == 'left':
-                return lighting_route(n, m-1, index, mode) # 2,1 izquierda
-            elif mode == 'right':
-                return lighting_route(n, m+1, index, mode) # 2,3 derecha
-            return lighting_route(n-1, m, index, mode) # 1,2 arriba
-
-        for indexN, row in enumerate(self.matrixorg):
-            for indexM, col in enumerate(row):
-                index = f"{indexN},{indexM}"
-                lighting_route(indexN, indexM, index)
-                lighting_route(indexN, indexM, index, mode='bottom')
-                lighting_route(indexN, indexM, index, mode='left')
-                lighting_route(indexN, indexM, index, mode='right')
-
-#matrix = [
-    [0, 0, 1,0,0],
-    [0, 0, 0,0,0],
-    [1, 0, 0,0,1],
-    [0, 0, 0,0,0],
-#]
-#l = Lighting(matrix)
-#l.rooms(wall=True)
-#l.v1()
-#matrix2, layers, colors = l.light_on()
-#l.rooms(wall=True, light=True, matrix=matrix2)
-
-
-#l.v2()
-#matrix2, layers, colors = l.light_on( layers=2)
-#l.rooms(wall=True, light=True, matrix=matrix2)
