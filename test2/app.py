@@ -18,6 +18,7 @@ def room():
 
     filename = request.args.get('filename', None)
     layers = int(request.args.get('layers', 0))
+    version = int(request.args.get('v', 'v2'))
 
     if not filename:
         flash('Missing argument filename')
@@ -40,12 +41,22 @@ def room():
     layers_color = {}
     try:
         l = Lighting(matrix)
-        l.v1()
+        if version == 'v1'
+            l.v1()
+        else:
+            l.v2()
         matrix, max_layers, layers_color = l.light_on(layers=layers)
     except Exception as e:
         flash(e)
         return redirect('/')
-    return render_template('room.html', matrix=matrix, layers=layers, max_layers=max_layers, layers_color=layers_color)
+
+    rt = render_template('room.html', 
+        matrix=matrix, 
+        layers=layers, 
+        max_layers=max_layers, 
+        layers_color=layers_color, 
+        filename=filename)
+    return rt
 
 @app.route('/upload', methods=['POST'])
 def upload():
@@ -53,11 +64,11 @@ def upload():
     if f.filename == '':
         flash('No selected file')
         return redirect('/')
-    filename = f"{datetime.datetime.now().timestamp()}"+secure_filename(f.filename) 
+    filename = f"{datetime.datetime.now().timestamp()}"+secure_filename(f.filename)
     f.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
     
     return redirect(f'/room?filename={filename}&layers=0')
 
 
 if  __name__ == '__main__':
-    app.run()
+    app.run(debug=True, host='0.0.0.0')
