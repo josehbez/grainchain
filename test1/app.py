@@ -41,6 +41,34 @@ def username_constraint(username):
 
 @app.post("/user", response_model=UserResponse)
 def create_user(user: User):
+    """
+    Parameters
+    ----------
+    Request: User, required
+        {
+            "name": "string",
+            "username": "string",
+            "location": "string"
+        }
+    
+    Returns
+    -------
+    Response:
+        {
+            "name": "string",
+            "username": "string",
+            "location": "string",
+            "zeta": {
+                "username": "string",
+                "token": "string",
+                "profiles": []
+            }
+        }
+    
+    Raises
+    ------
+        HTTPException
+    """
     new_user = None
     try:
         username_constraint(user.username)
@@ -49,7 +77,7 @@ def create_user(user: User):
             zeta_data = libzeta.create_user(user.username)
             user_data.update({'zeta': zeta_data})
             new_user = UserResponse.parse_obj(user_data)
-            id = libmongo.users.insert(user_data)
+            id = libmongo.users.insert_one(user_data)
         else:
             raise HTTPException(
                 status_code=409,
@@ -62,6 +90,29 @@ def create_user(user: User):
 
 @app.get("/user/{username}", response_model=UserResponse)
 def get_user(username: str):
+    """
+    Parameters
+    ----------
+    username : str, required
+    
+    Returns
+    -------
+    Response:
+        {
+            "name": "string",
+            "username": "string",
+            "location": "string",
+            "zeta": {
+                "username": "string",
+                "token": "string",
+                "profiles": []
+            }
+        }
+    
+    Raises
+    ------
+        HTTPException
+    """
     user = None
     try:
         username_constraint(username)
@@ -80,6 +131,22 @@ def get_user(username: str):
 
 @app.delete("/user/{username}", response_model=DeleteResponse)
 def delete_user(username: str):
+    """
+    Parameters
+    ----------
+    username : str, required
+    
+    Returns
+    -------
+    Response:
+        {
+            "deleted": true,
+        }
+    
+    Raises
+    ------
+        HTTPException
+    """
     response = False
     try:
         username_constraint(username)
@@ -100,6 +167,35 @@ def delete_user(username: str):
 
 @app.put("/user/{username}", response_model=UserResponse)
 def update_user(username: str, user: UserUpdate):
+    """
+    Parameters
+    ----------
+    Request: User, required minimum one
+        {
+            "name": "string", #  optional
+            "username": "string", #  optional. Is new username, update the zeta data
+            "location": "string", #  optional
+            "zeta": bool #  optional. if is true, update the zeta data
+        }
+    
+    Returns
+    -------
+    Response:
+        {
+            "name": "string",
+            "username": "string",
+            "location": "string",
+            "zeta": {
+                "username": "string",
+                "token": "string",
+                "profiles": []
+            }
+        }
+    
+    Raises
+    ------
+        HTTPException
+    """    
     update_user = None
     try:
         username_constraint(username)
@@ -151,6 +247,18 @@ def update_user(username: str, user: UserUpdate):
 
 @app.get('/fake/users', response_model=FakeUserResponse)
 def get_fake_users():
+    """    
+    Returns
+    -------
+    Response:
+        {
+            "count": 0 
+        }
+    
+    Raises
+    ------
+        HTTPException
+    """
     count = 0
     try:
         fake = Faker()
@@ -175,6 +283,18 @@ def get_fake_users():
 
 @app.delete("/fake/users", response_model=FakeUserResponse)
 def delete_fake_users():
+    """    
+    Returns
+    -------
+    Response:
+        {
+            "count": 0 
+        }
+    
+    Raises
+    ------
+        HTTPException
+    """
     count = 0
     try:
         result = libmongo.users.delete_many({})
@@ -187,6 +307,22 @@ def delete_fake_users():
 
 @app.get("/report/users")
 def get_report_users():
+    """    
+    Returns
+    -------
+    Response:
+        {
+            "location_N": {
+                "location": "string",
+                "users": 0 #  Total users located
+            },
+            "_total": 0 #  Total users that exists
+        }
+    
+    Raises
+    ------
+        HTTPException
+    """
     report = {}
     try:
         total = libmongo.users.count_documents({})
