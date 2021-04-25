@@ -6,6 +6,7 @@ RUN mkdir ${MYHOME}
 WORKDIR ${MYHOME}
 COPY ./ ${MYHOME}
 
+RUN pip install --upgrade pip
 RUN pip install --user -r requirements.txt
 
 ENTRYPOINT ["python"]
