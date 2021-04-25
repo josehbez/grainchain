@@ -1,0 +1,9 @@
+version: "3.7"
+
+services: 
+  grainchain2:
+    build: .
+    ports:
+        - "5000:5000"
+    volumes:
+        - ./storage:/grainchain2/storage
