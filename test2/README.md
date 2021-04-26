@@ -1,6 +1,6 @@
-# Distribucion de bombillos
+# Distribución de bombillos
 
-## Instación
+## Instalación
 
 ```bash
     docker-compose up --build
